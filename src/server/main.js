@@ -24,7 +24,10 @@ app.use(cors({
 import authRoutes from './routes/authRoutes.js';
 app.use('/api/auth', authRoutes);
 
-// Start the Vite-powered Express server
-viteExpress.listen(app, process.env.PORT || 5000, () => {
+//server
+const server  = app.listen(process.env.PORT || 5000, process.env.HOST || 'localhost' ,  () => {
   console.log(`Server running on port ${process.env.PORT || 5000}`);
-});
+})
+
+// Start the Vite-powered Express server
+viteExpress.bind(app, server);

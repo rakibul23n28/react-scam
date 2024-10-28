@@ -1,67 +1,103 @@
-import { useContext, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
+import { useContext, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+
+// Import icons
+import homeIcon from "/src/client/assets/icons/home.png";
+import profileIcon from "/src/client/assets/icons/profile.png";
+import historyIcon from "/src/client/assets/icons/history.png";
+import logoutIcon from "/src/client/assets/icons/logout.png";
+import loginIcon from "/src/client/assets/icons/login.png";
+import signupIcon from "/src/client/assets/icons/signup.png";
+import downArrowIcon from "/src/client/assets/icons/down-arrow.png";
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const [profileDropDown, setProfileDropDown] = useState(true);
-  const navigate = useNavigate();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
 
-  // Function to check if a path is active
+  // Check if a path is active
   const isActive = (path) => location.pathname === path;
 
   return (
     <nav className="bg-white shadow-lg p-4">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Left Side: Links & Authentication */}
+        {/* Left Side: Profile and Dropdown */}
         <div className="flex items-center space-x-4">
-
           <div className="profile border-l-4 pl-2 border-red-500 relative">
-            <div className="flex items-center justify-center space-x-1 bg-slate-300 rounded-full ">
-              <p className='text-3xl bg-gray-400 w-10 h-10 text-center rounded-full font-bold'>{user ? user.name[0].toUpperCase() : 'l'}</p>
-              <p>{user ? user.name : 'double your money'}</p>
-              <div className="icon cursor-pointer p-2 bg-slate-300 border-l-2 border-y-2 rounded" onClick={() => setProfileDropDown(!profileDropDown)}>
-                <img className={`w-4 h-4 invert ${profileDropDown ? 'rotate-180' : ''}`} src="/src/client/assets/icons/down-arrow.png" alt="down-arrow" />
+            <div className="flex items-center bg-slate-300 rounded-full space-x-1">
+              <p className="text-3xl bg-gray-400 w-10 h-10 text-center rounded-full font-bold">
+                {user ? user.name[0].toUpperCase() : "L"}
+              </p>
+              <p>{user ? user.name : "double your money"}</p>
+              <div
+                className="icon cursor-pointer p-2 bg-slate-300 border-l-2 border-y-2 rounded"
+                onClick={() => setProfileDropDown(!profileDropDown)}
+              >
+                <img
+                  className={`w-4 h-4 invert ${
+                    profileDropDown ? "rotate-180" : ""
+                  }`}
+                  src={downArrowIcon}
+                  alt="Toggle Dropdown"
+                />
               </div>
             </div>
-            <div className={`flex flex-col bg-gray-300 p-2 bg-opacity-50 absolute text-xl left-5 top-12 rounded gap-2 transition-all duration-300 ${profileDropDown ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
-              <Link to="/" className={`nav-item flex items-center gap-2 px-2 rounded ${isActive('/') ? 'bg-blue-500 text-white' : ''}`}>
-                <img className={`w-5 h-5 invert ${isActive('/') ? '' : 'invert-0'}`} src="/src/client/assets/icons/home.png" alt="" />
-                <p>Home</p>
-              </Link>
-              <hr className="border-gray-400" />
-              {user ? (
-                <>
-                  <Link to="/profile" className={`nav-item flex items-center gap-2 px-2 rounded ${isActive('/profile') ? 'bg-blue-500 text-white' : ''}`}>
-                    <img className={`w-5 h-5 invert ${isActive('/profile') ? '' : 'invert-0'}`} src="/src/client/assets/icons/profile.png" alt="" />
-                    <p>Profile</p>
-                  </Link>
-                  <hr className="border-gray-400" />
-                  <Link to="/history" className={`nav-item flex items-center gap-2 px-2 rounded ${isActive('/history') ? 'bg-blue-500 text-white' : ''}`}>
-                    <img className={`w-5 h-5 invert ${isActive('/history') ? '' : 'invert-0'}`} src="/src/client/assets/icons/history.png" alt="" />
-                    <p>History</p>
-                  </Link>
-                  <hr className="border-gray-400" />
-                  <Link onClick={logout} className={`nav-item flex items-center gap-2 px-2 rounded ${isActive('/logout') ? 'bg-blue-500 text-white' : ''}`}>
-                    <img className={`w-5 h-5 invert ${isActive('/logout') ? '' : 'invert-0'}`} src="/src/client/assets/icons/logout.png" alt="" />
-                    <p>Logout</p>
-                  </Link>
-                  
-                </>
-              ) : (
-                <>
-                  <Link to="/login" className={`nav-item flex items-center text-green-500 gap-2 px-2 rounded ${isActive('/login') ? 'bg-blue-500 text-white' : ''}`}>
-                    <img className={`w-5 h-5 invert ${isActive('/login') ? '' : 'invert-0'}`} src="/src/client/assets/icons/login.png" alt="" />
-                    <p>Login</p>
-                  </Link>
-                  <Link to="/signup" className={`nav-item flex items-center text-green-500 gap-2 px-2 rounded ${isActive('/signup') ? 'bg-blue-500 text-white' : ''}`}>
-                    <img className={`w-5 h-5 invert ${isActive('/signup') ? '' : 'invert-0'}`} src="/src/client/assets/icons/signup.png" alt="" />
-                    <p>Signup</p>
-                  </Link>
-                </>
-              )}
-            </div>
+
+            {/* Dropdown Menu */}
+            {profileDropDown && (
+              <div className="flex flex-col bg-gray-300 p-2 bg-opacity-50 absolute text-xl left-5 top-12 rounded gap-2 transition-all duration-300">
+                <NavItem
+                  to="/"
+                  label="Home"
+                  icon={homeIcon}
+                  isActive={isActive}
+                />
+                <hr className="border-gray-400" />
+                {user ? (
+                  <>
+                    <NavItem
+                      to="/profile"
+                      label="Profile"
+                      icon={profileIcon}
+                      isActive={isActive}
+                    />
+                    <hr className="border-gray-400" />
+                    <NavItem
+                      to="/history"
+                      label="History"
+                      icon={historyIcon}
+                      isActive={isActive}
+                    />
+                    <hr className="border-gray-400" />
+                    <Link
+                      onClick={logout}
+                      className="nav-item flex items-center gap-2 px-2 rounded"
+                    >
+                      <img className="w-5 h-5" src={logoutIcon} alt="Logout" />
+                      <p>Logout</p>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <NavItem
+                      to="/login"
+                      label="Login"
+                      icon={loginIcon}
+                      isActive={isActive}
+                      className="text-green-500"
+                    />
+                    <NavItem
+                      to="/signup"
+                      label="Signup"
+                      icon={signupIcon}
+                      isActive={isActive}
+                      className="text-green-500"
+                    />
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -75,5 +111,21 @@ const Navbar = () => {
     </nav>
   );
 };
+
+const NavItem = ({ to, label, icon, isActive, className = "" }) => (
+  <Link
+    to={to}
+    className={`nav-item flex items-center gap-2 px-2 rounded ${
+      isActive(to) ? "bg-blue-500 text-white" : ""
+    } ${className}`}
+  >
+    <img
+      className={`w-5 h-5 invert ${isActive(to) ? "" : "invert-0"}`}
+      src={icon}
+      alt={label}
+    />
+    <p>{label}</p>
+  </Link>
+);
 
 export default Navbar;
