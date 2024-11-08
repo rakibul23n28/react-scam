@@ -16,7 +16,8 @@ export const AuthProvider = ({ children }) => {
         {
           email,
           password,
-        }
+        },
+        { withCredentials: true }
       );
       setUser(data.user);
       localStorage.setItem("user", JSON.stringify(data.user));
@@ -44,7 +45,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeUser = async () => {
       const storedUser = localStorage.getItem("user");
-
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       } else {

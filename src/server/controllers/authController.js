@@ -68,6 +68,7 @@ export const login = async (req, res) => {
     }
 
     const userPayload = setTokenCookie(res, user);
+    req.user = userPayload;
 
     res.json({ msg: "Login successful", user: userPayload });
   } catch (error) {
@@ -83,6 +84,7 @@ export const logout = (req, res) => {
     sameSite: "Strict",
     secure: process.env.NODE_ENV === "production",
   });
+
   res.json({ msg: "Logout successful" });
 };
 

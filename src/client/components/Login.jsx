@@ -1,31 +1,30 @@
-import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import Navbar from './items/Navbar';
-import Footer from './items/Footer';
+import { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import Navbar from "./items/Navbar";
+import Footer from "./items/Footer";
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   useEffect(() => {
-    document.title = 'Access Your Account - ZeedBen77Pro'; // Set custom title
+    document.title = "Access Your Account - ZeedBen77Pro"; // Set custom title
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
+    setErrorMessage("");
     const { success, message } = await login(email, password);
     if (success) {
-      navigate('/');
+      navigate("/");
     } else {
       setErrorMessage(message);
     }
   };
-
 
   return (
     <>
@@ -36,7 +35,7 @@ const Login = () => {
           className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 w-full max-w-md"
         >
           <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
-          
+
           {/* Error message display */}
           {errorMessage && (
             <div className="bg-red-200 text-red-600 p-2 rounded mb-4 text-center">
@@ -68,7 +67,7 @@ const Login = () => {
               Password
             </label>
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Password"
               value={password}
@@ -80,12 +79,14 @@ const Login = () => {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-2 top-9 text-sm text-gray-500 focus:outline-none"
             >
-              {showPassword ? 'Hide' : 'Show'}
+              {showPassword ? "Hide" : "Show"}
             </button>
           </div>
           <div className="flex items-center mb-4">
             <p>haven't registered yet?</p>
-            <a href="/signup" className="text-blue-500 ml-2">create an account</a>
+            <a href="/signup" className="text-blue-500 ml-2">
+              create an account
+            </a>
           </div>
           <div className="flex items-center justify-between">
             <button
@@ -99,7 +100,6 @@ const Login = () => {
       </div>
       <Footer />
     </>
-    
   );
 };
 

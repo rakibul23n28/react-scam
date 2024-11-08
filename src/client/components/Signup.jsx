@@ -1,32 +1,32 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Navbar from './items/Navbar';
-import axios from 'axios';
-import Footer from './items/Footer';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Navbar from "./items/Navbar";
+import axios from "axios";
+import Footer from "./items/Footer";
 
 const Signup = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Create an Account - ZeedBen77Pro'; // Set custom title
+    document.title = "Create an Account - ZeedBen77Pro"; // Set custom title
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/register', {
+      await axios.post("http://localhost:5000/api/auth/register", {
         firstName,
         lastName,
         email,
         password,
       });
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Error during signup', error);
+      console.error("Error during signup", error);
     }
   };
 
@@ -39,7 +39,7 @@ const Signup = () => {
           className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4 w-full max-w-md"
         >
           <h1 className="text-3xl font-bold text-center mb-6">Sign Up</h1>
-          
+
           <div className="mb-4">
             <label
               htmlFor="firstName"
@@ -110,7 +110,9 @@ const Signup = () => {
           </div>
           <div className="flex items-center mb-4">
             <p>Already have an account? </p>
-            <a href="/login" className="text-blue-500 ml-2">login</a>
+            <a href="/login" className="text-blue-500 ml-2">
+              login
+            </a>
           </div>
           <div className="flex items-center justify-between">
             <button
@@ -124,7 +126,6 @@ const Signup = () => {
       </div>
       <Footer />
     </>
-    
   );
 };
 
