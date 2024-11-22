@@ -17,7 +17,7 @@ app.use(cookieParser()); // For parsing cookies
 // CORS setup to allow cookies from the frontend
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Update with your frontend URL
+    origin: process.env.FRONTEND_URL || "http://localhost:5000", // Update with your frontend URL
     credentials: true, // Enable credentials (for cookies)
   })
 );
@@ -25,6 +25,12 @@ app.use(
 // Import and use your routes
 import authRoutes from "./routes/authRoutes.js";
 app.use("/api/auth", authRoutes);
+
+import adminRoutes from "./routes/adminRoutes.js";
+app.use("/api/admin", adminRoutes);
+
+import staticRoutes from "./routes/staticRoute.js";
+app.use("/api", staticRoutes);
 
 //server
 const server = app.listen(

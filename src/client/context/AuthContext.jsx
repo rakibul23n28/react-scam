@@ -12,17 +12,20 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          email,
-          password,
-        },
+        "http://localhost:3000/api/auth/login",
+        { email, password },
         { withCredentials: true }
       );
-      setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      console.log("Backend response:", data); // Debug response
+
+      // Store user and token in localStorage
+      const userWithToken = { ...data.user, token: data.token };
+      setUser(userWithToken);
+      localStorage.setItem("user", JSON.stringify(userWithToken));
+
       return { success: true };
     } catch (error) {
+      console.error(error);
       return {
         success: false,
         message: error.response?.data?.msg || "Login failed. Please try again.",
@@ -33,7 +36,9 @@ export const AuthProvider = ({ children }) => {
   // Function to handle logout
   const logout = async () => {
     try {
-      await axios.get("http://localhost:5000/api/auth/logout");
+      await axios.get("http://localhost:3000/api/auth/logout", {
+        withCredentials: true,
+      });
       setUser(null);
       localStorage.removeItem("user");
     } catch (error) {
@@ -41,23 +46,37 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Retrieve user data on initial load
+  // Function to handle API calls with Authorization header
+  const getAuthHeaders = () => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const token = storedUser?.token;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  // Retrieve user data on initial load and validate token
   useEffect(() => {
     const initializeUser = async () => {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      } else {
+        const parsedUser = JSON.parse(storedUser);
         try {
-          const { data } = await axios.post(
-            "http://localhost:5000/api/auth/user",
-            {},
-            { withCredentials: true }
+          // Validate token with backend
+          const { data } = await axios.get(
+            "http://localhost:3000/api/auth/validate",
+            {
+              headers: getAuthHeaders(), // Pass token in header
+              withCredentials: true,
+            }
           );
-          setUser(data.user);
-          localStorage.setItem("user", JSON.stringify(data.user));
+
+          if (data.isValid) {
+            setUser(parsedUser); // Set user if the token is valid
+          } else {
+            localStorage.removeItem("user"); // Remove user if token is invalid
+          }
         } catch (error) {
-          localStorage.removeItem("user");
+          console.error("Error validating token:", error);
+          localStorage.removeItem("user"); // Clear user if validation fails
         }
       }
       setLoading(false); // Finish loading after check

@@ -8,7 +8,10 @@ import FAQ from "./components/FAQ";
 import Profile from "./components/Profile";
 import RedirectIfAuthenticated from "./components/RedirectIfAuthenticated";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminProtectedRoute from "./components/AdminProtectedRoute"; // Import AdminProtectedRoute
 import BuyPackage from "./components/BuyPackage";
+import AddTask from "./components/admin/AddTask";
+import AddPackage from "./components/admin/AddPackage";
 
 const App = () => (
   <AuthProvider>
@@ -52,6 +55,24 @@ const App = () => (
             <ProtectedRoute>
               <BuyPackage />
             </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Protected Routes */}
+        <Route
+          path="/admin/addtask"
+          element={
+            <AdminProtectedRoute>
+              <AddTask />
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/addpackage"
+          element={
+            <AdminProtectedRoute>
+              <AddPackage />
+            </AdminProtectedRoute>
           }
         />
       </Routes>

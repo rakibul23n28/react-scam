@@ -1,3 +1,4 @@
+// src/pages/Home.js
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -6,21 +7,37 @@ import ContactUs from "./items/ContactUs";
 import Navbar from "./items/Navbar";
 import Footer from "./items/Footer";
 import Myinfo from "./items/Myinfo";
+import TaskSection from "./items/Task";
+import axios from "axios";
 
 const Home = () => {
   const { user } = useContext(AuthContext);
+  const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
   const [showComments, setShowComments] = useState(true);
+  const [activeTaskIndex, setActiveTaskIndex] = useState(0);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/tasks", {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setTasks(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching tasks:", error);
+      });
+  }, []);
 
   useEffect(() => {
     if (user) {
-      document.title = `ZeedBen77Pro - ${user.name}!`; // Set custom title
+      document.title = `ZeedBen77Pro - ${user.name}!`;
     }
   }, [user]);
 
-  // Function to handle the navigation to BuyPackage
   const handleBuyNow = (packageName) => {
-    navigate(`/buy/${packageName}`); // Assuming the route will be /buy/PackageName
+    navigate(`/buy/${packageName}`);
   };
 
   const packages = [
@@ -118,6 +135,14 @@ const Home = () => {
           </div>
         </div>
       </section>
+      {/* Task Section */}
+      {tasks && tasks.length > 0 && (
+        <TaskSection
+          tasks={tasks}
+          activeTaskIndex={activeTaskIndex}
+          setActiveTaskIndex={setActiveTaskIndex}
+        />
+      )}
 
       {/* Packages Section */}
       <section className="py-4 bg-gray-50">

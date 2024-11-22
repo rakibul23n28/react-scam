@@ -9,102 +9,87 @@ import historyIcon from "/src/client/assets/icons/history.png";
 import logoutIcon from "/src/client/assets/icons/logout.png";
 import loginIcon from "/src/client/assets/icons/login.png";
 import signupIcon from "/src/client/assets/icons/signup.png";
-import downArrowIcon from "/src/client/assets/icons/down-arrow.png";
 
 const Navbar = () => {
-  const { user, logout } = useContext(AuthContext);
-  const [profileDropDown, setProfileDropDown] = useState(true);
+  const { user } = useContext(AuthContext);
   const location = useLocation();
 
   // Check if a path is active
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-white shadow-lg sticky top-[-1px] z-50">
+    <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="container flex justify-between items-center">
         {/* Left Side: Profile and Dropdown */}
         <div className="w-full">
-          <div className="w-full flex flex-row items-center  justify-between">
+          <div className="w-full flex flex-row items-center  justify-between py-1">
+            {user ? (
+              <div className="flex flex-row items-center justify-center">
+                <div className="flex items-center gap-1">
+                  <Link to="/profile">
+                    <div className="h-8 w-8 flex items-center justify-center rounded-full bg-orange-700 text-white font-bold ml-1">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </div>
+                  </Link>
+                  <Link to="/profile">
+                    <p className="text-sm font-semibold text-blue-600">
+                      {user.name}
+                    </p>
+                  </Link>
+                </div>
+              </div>
+            ) : null}
+
             <div className="text-xl font-bold text-blue-600 text-center px-2">
               <Link to="/">
                 ZeedBen77<span className="text-red-600">Pro</span>
               </Link>
             </div>
-            <div className="flex flex-row items-center space-x-1">
-              {!user ? (
-                <>
-                  <NavItem
-                    to="/login"
-                    label="Login"
-                    icon={loginIcon}
-                    isActive={isActive}
-                    className=""
-                  />
-                  <NavItem
-                    to="/signup"
-                    label="Signup"
-                    icon={signupIcon}
-                    isActive={isActive}
-                    className=""
-                  />
-                </>
-              ) : (
-                <></>
-              )}
-              <div
-                className="icon cursor-pointer p-2 bg-red-500 border-l-2 border-y-2 "
-                onClick={() => setProfileDropDown(!profileDropDown)}
-              >
-                <img
-                  className={`w-4 h-4 invert ${
-                    profileDropDown ? "rotate-180" : ""
-                  }`}
-                  src={downArrowIcon}
-                  alt="Toggle Dropdown"
+            {!user ? (
+              <div className="flex flex-row items-center space-x-1">
+                <NavItem
+                  to="/login"
+                  label="Login"
+                  icon={loginIcon}
+                  isActive={isActive}
+                  className=""
+                />
+                <NavItem
+                  to="/signup"
+                  label="Signup"
+                  icon={signupIcon}
+                  isActive={isActive}
+                  className=""
                 />
               </div>
-            </div>
+            ) : null}
           </div>
 
           {/* Dropdown Menu */}
-          {profileDropDown && (
-            <div className="fixed bottom-0 left-0 w-full z-50 flex flex-row justify-between bg-gray-950  text-white text-sm rounded p-1 transition-all duration-300">
-              <NavItem
-                to="/"
-                label="Home"
-                icon={homeIcon}
-                isActive={isActive}
-              />
-              <hr className="border-gray-400" />
-              {user ? (
-                <>
-                  <NavItem
-                    to="/profile"
-                    label="Profile"
-                    icon={profileIcon}
-                    isActive={isActive}
-                  />
-                  <hr className="border-gray-400" />
-                  <NavItem
-                    to="/history"
-                    label="History"
-                    icon={historyIcon}
-                    isActive={isActive}
-                  />
-                  <hr className="border-gray-400" />
-                  <Link
-                    onClick={logout}
-                    className="nav-item bg-red-500 flex items-center gap-2 px-2 rounded"
-                  >
-                    <img className="w-5 h-5" src={logoutIcon} alt="Logout" />
-                    <p>Logout</p>
-                  </Link>
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
-          )}
+          <div className="fixed bottom-0 left-0 sm:top-12 sm:flex-col sm:left-3 sm:h-36 h-fit  w-full sm:w-28 z-50 flex flex-row justify-between bg-gray-950  text-white text-sm rounded p-1">
+            <NavItem to="/" label="Home" icon={homeIcon} isActive={isActive} />
+            <hr className="border-gray-400" />
+            <NavItem
+              to="/deposit"
+              label="Deposit"
+              icon={profileIcon}
+              isActive={isActive}
+            />
+            <hr className="border-gray-400" />
+            <NavItem
+              to="/packages"
+              label="Packages"
+              icon={historyIcon}
+              isActive={isActive}
+            />
+            <hr className="border-gray-400" />
+            <NavItem
+              to="/profile"
+              label="Account"
+              icon={logoutIcon}
+              isActive={isActive}
+            />
+          </div>
         </div>
       </div>
     </nav>
@@ -114,7 +99,7 @@ const Navbar = () => {
 const NavItem = ({ to, label, icon, isActive, className = "" }) => (
   <Link
     to={to}
-    className={`nav-item flex items-center gap-2 px-2 rounded ${
+    className={`nav-item flex items-center gap-2 px-1 rounded ${
       isActive(to) ? "bg-blue-500 text-white" : "bg-blue-400"
     } ${className}`}
   >

@@ -4,14 +4,17 @@ import {
   register,
   logout,
   getUser,
+  validate,
 } from "../controllers/authController.js";
-import { auth } from "../middleware/auth.js"; // Use named import
+import { auth, validateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.post("/login", login);
 router.post("/register", register);
 router.get("/logout", logout);
-router.post("/user", auth, getUser);
+router.get("/user", auth, getUser);
+
+router.get("/validate", validateToken, validate);
 
 export default router;

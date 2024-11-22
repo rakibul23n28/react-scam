@@ -1,26 +1,21 @@
-import User from "../models/User.js";
+import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// Helper function to create and set JWT in a cookie
-const setTokenCookie = (res, user) => {
+// Helper function to create and send JWT
+const generateToken = (user) => {
   const payload = {
     _id: user._id,
     name: `${user.firstName} ${user.lastName}`,
     profileImageUrl: user.profileImageUrl,
     email: user.email,
     role: user.role,
+    balance: user.balance,
   };
+
+  // Generate JWT token with 1-hour expiration
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-  res.cookie("token", token, {
-    httpOnly: true,
-    sameSite: "Strict",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 3600000, // 1 hour
-  });
-
-  return payload;
+  return token;
 };
 
 // Register a new user
@@ -48,7 +43,7 @@ export const register = async (req, res) => {
   }
 };
 
-// Login user and set JWT token in a cookie
+// Login user and return JWT token
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -67,24 +62,29 @@ export const login = async (req, res) => {
       return res.status(400).json({ msg: "Invalid email or password" });
     }
 
-    const userPayload = setTokenCookie(res, user);
-    req.user = userPayload;
+    // Generate JWT token
+    const token = generateToken(user);
 
-    res.json({ msg: "Login successful", user: userPayload });
+    res.json({
+      msg: "Login successful",
+      token, // Send the JWT token to the client
+      user: {
+        _id: user._id,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        role: user.role,
+        balance: user.balance,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Server error during login" });
   }
 };
 
-// Logout user by clearing the token cookie
+// Logout user by clearing JWT (frontend will handle token removal)
 export const logout = (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "Strict",
-    secure: process.env.NODE_ENV === "production",
-  });
-
+  // Since we are not using cookies, logout is handled on the client-side by removing the token.
   res.json({ msg: "Logout successful" });
 };
 
@@ -94,4 +94,12 @@ export const getUser = (req, res) => {
     return res.status(401).json({ msg: "Unauthorized" });
   }
   res.json({ user: req.user });
+};
+
+// Route to validate token
+export const validate = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ isValid: false });
+  }
+  res.json({ isValid: true });
 };

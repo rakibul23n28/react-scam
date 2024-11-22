@@ -8,6 +8,23 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   profileImageUrl: { type: String },
+  deposits: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "deposit",
+      required: true,
+    },
+  ],
+  balance: {
+    type: Number,
+    default: 100,
+  },
+  withdrawals: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "withdrawal",
+    },
+  ],
 });
 
 // Hash the password before saving
